@@ -1,0 +1,18 @@
+import requests
+from bs4 import BeautifulSoup
+
+def getrec():
+    key = "Paneer"
+    url = "http://allrecipes.com/search/results/?wt="+key+"&sort=re"
+    print(url)
+    response = requests.get(url)
+    result_page = BeautifulSoup(response.content,'lxml')
+    r = result_page.find_all('ar-save-item')
+    f=open("paneer.xls",'w')
+    for res in r:
+        f.write(res.get('data-id')+','+res.get('data-name')+','+res.get('data-imageurl')+'\n')
+    f.close()
+getrec()
+
+
+http://matveyan.ru/Themes/mycity/01.Default/html/index.html

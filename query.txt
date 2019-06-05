@@ -1,0 +1,18 @@
+select data_id, count(*) from tbldata where data_id in (select distinct data_id from tbldata) group by data_id
+
+select a. * from tbldata a inner join (select distinct Recipe_Name, min(id) as id from tbldata group by Recipe_Name ) as b on a.Recipe_Name = b.Recipe_Name and a.id = b.id inner join tblfreq f on a.Data_Id=f.Data_Id where a.Recipe_Name like '%" + srch + "%' or a.Description like '%" + srch + "%' or a.KeyWord like '%" + srch + "%' order by f.frequency desc
+
+
+DECLARE @kword nvarchar(200);
+DECLARE keywordCursor CURSOR FOR(SELECT keyword FROM keyword_table);
+OPEN keywordCursor;
+FETCH NEXT FROM keywordCursor INTO @kword;
+WHILE @@FETCH_STATUS=0
+BEGIN
+    INSERT INTO keyword_occ(keyword,occ)
+    VALUES(@kword,(SELECT count(*) FROM art_table WHERE CONTAINS(art, @kword)));
+    FETCH NEXT FROM keywordCursor INTO @kword;
+END;
+CLOSE keywordCursor;
+DEALLOCATE keywordCursor;
+GO
